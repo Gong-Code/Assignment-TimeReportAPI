@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using TimeReportAPI.Data;
 using TimeReportAPI.DTO;
+using TimeReportAPI.DTO.TimeRegisterDTO;
 
 namespace TimeReportAPI.Infrastructure.Profiles
 {
@@ -8,9 +9,10 @@ namespace TimeReportAPI.Infrastructure.Profiles
     {
         public TimeRegisterProfile()
         {
-            CreateMap<TimeRegister, TimeRegisterDTO>().ReverseMap();
-            CreateMap<TimeRegister, List<TimeRegisterDTO>>().ReverseMap();
-            CreateMap<TimeRegister, List<TimeRegisterEditDTO>>().ReverseMap();
+            CreateMap<TimeRegister, GetAllTimeRegisterDTO>().ReverseMap();
+            CreateMap<TimeRegister, GetOneTimeRegisterDTO>().ReverseMap();
+            CreateMap<TimeRegister, CreateTimeRegisterDTO>().ReverseMap();
+            CreateMap<TimeRegister, UpdateTimeRegisterDTO>().ReverseMap();
         }
     }
 }

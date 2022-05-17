@@ -2,8 +2,8 @@
 {
     public class Customer
     {
-        public Guid Id { get; set; }
+        public int CustomerId { get; set; }
         public string Name { get; set; }
-        public List<Project> Projects { get; set; }
+        public List<Project> Projects { get; set; } = new List<Project>();
     }
 }

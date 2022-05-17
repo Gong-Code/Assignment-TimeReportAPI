@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TimeReportAPI.Data;
 using TimeReportAPI.DTO;
+using TimeReportAPI.DTO.ProjectDTO;
 
 namespace TimeReportAPI.Controllers
 {
@@ -24,46 +25,52 @@ namespace TimeReportAPI.Controllers
         {
             var projects = _context.Projects
                 .Include(t => t.TimeRegisters)
-                .Select(_mapper.Map<Project, ProjectDTO>)
+                .Select(_mapper.Map<Project, GetAllProjectDTO>)
                 .ToList();
             
             return Ok(projects);
         }
 
         [HttpGet]
-        [Route("{id:guid}")]
-        public IActionResult GetById(Guid id)
+        [Route("{id}")]
+        public IActionResult GetById(int id)
         {
-            var projectDb = _context.Projects.Include(t => t.TimeRegisters).FirstOrDefault(c => c.Id == id);
+            var projectDb = _context.Projects.Include(t => t.TimeRegisters).FirstOrDefault(c => c.ProjectId == id);
             if (projectDb == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map<ProjectDTO>(projectDb);
+            _mapper.Map<GetAllProjectDTO>(projectDb);
 
             return Ok(projectDb);
         }
 
         [HttpPost]
-        public IActionResult New(ProjectDTO project)
+        public IActionResult New(CreateProjectDTO createProject)
         {
-            var projectDb = _mapper.Map<Project>(project);
-
-            var projectDto = _mapper.Map<ProjectDTO>(projectDb);
-
-            _context.Projects.Add(projectDb);
+            var project = _mapper.Map<Project>(createProject);
+            var customer = _context.Customers.Find(createProject.CustomerId);
+            
+            if (customer == null)
+            {
+                return NotFound("Customer not found.");
+            }
+            
+            customer.Projects.Add(project);
 
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetById), new { id = projectDto.Id }, projectDto);
+            var projectDto = _mapper.Map<GetOneProjectDTO>(project);
+
+            return CreatedAtAction(nameof(GetById), new { id = project.ProjectId }, projectDto);
         }
 
         [HttpPut]
-        [Route("{id:guid}")]
-        public IActionResult Update(Guid id, ProjectEditDTO projectEditDto)
+        [Route("{id}")]
+        public IActionResult Update(int id, UpdateProjectDTO projectEditDto)
         {
-            var projectDb = _context.Projects.FirstOrDefault(c => c.Id == id);
+            var projectDb = _context.Projects.FirstOrDefault(c => c.ProjectId == id);
             if (projectDb == null)
             {
                 return NotFound();
@@ -78,10 +85,10 @@ namespace TimeReportAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:guid}")]
-        public IActionResult Delete(Guid id)
+        [Route("{id}")]
+        public IActionResult Delete(int id)
         {
-            var projectDb = _context.Projects.FirstOrDefault(c => c.Id == id);
+            var projectDb = _context.Projects.FirstOrDefault(c => c.ProjectId == id);
             if (projectDb == null)
             {
                 return NotFound();

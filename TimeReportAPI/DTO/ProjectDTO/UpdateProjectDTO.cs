@@ -2,12 +2,10 @@
 
 namespace TimeReportAPI.DTO
 {
-    public class ProjectDTO
+    public class UpdateProjectDTO
     {
-        public Guid Id { get; set; }
         public string ProjectName { get; set; }
         public string Description { get; set; }
 
-        public List<Customer> Customers { get; set; } = new List<Customer>();
     }
 }

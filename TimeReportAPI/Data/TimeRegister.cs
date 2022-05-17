@@ -4,10 +4,11 @@ namespace TimeReportAPI.Data
 {
     public class TimeRegister
     {
-        public Guid Id { get; set; }
+        public int TimeRegisterId { get; set; }
         public DateTime Date { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
+        public Project Project { get; set; }
 
     }
 }

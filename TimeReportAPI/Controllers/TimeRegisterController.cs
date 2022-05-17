@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TimeReportAPI.Data;
 using TimeReportAPI.DTO;
+using TimeReportAPI.DTO.TimeRegisterDTO;
 
 namespace TimeReportAPI.Controllers
 {
@@ -23,46 +23,46 @@ namespace TimeReportAPI.Controllers
         public IActionResult GetAll()
         {
             var timeRegisterDb = _context.TimeRegisters
-                .Select(_mapper.Map<TimeRegister, TimeRegisterDTO>)
+                .Select(_mapper.Map<TimeRegister, GetAllTimeRegisterDTO>)
                 .ToList();
 
             return Ok(timeRegisterDb);
         }
 
         [HttpGet]
-        [Route("{id:guid}")]
-        public IActionResult GetById(Guid id)
+        [Route("{id}")]
+        public IActionResult GetById(int id)
         {
-            var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.Id == id);
+            var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.TimeRegisterId == id);
             if (timeRegisterDb == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map<TimeRegisterDTO>(timeRegisterDb);
+            _mapper.Map<GetAllTimeRegisterDTO>(timeRegisterDb);
 
             return Ok(timeRegisterDb);
         }
 
         [HttpPost]
-        public IActionResult New(TimeRegisterDTO timeRegister)
+        public IActionResult New(CreateTimeRegisterDTO createTimeRegister)
         {
-            var timeRegisterDb = _mapper.Map<TimeRegister>(timeRegister);
+            var timeRegister = _mapper.Map<TimeRegister>(createTimeRegister);
 
-            var timeRegisterDto = _mapper.Map<TimeRegisterDTO>(timeRegisterDb);
+     
 
-            _context.TimeRegisters.Add(timeRegisterDb);
+            _context.TimeRegisters.Add(timeRegister);
 
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetById), new { id = timeRegisterDto.Id }, timeRegisterDto);
+            return CreatedAtAction(nameof(GetById), new { id = timeRegister.TimeRegisterId}, timeRegister);
         }
 
         [HttpPut]
-        [Route("{id:guid}")]
-        public IActionResult Update(Guid id, TimeRegisterEditDTO timeRegisterEditDto)
+        [Route("{id}")]
+        public IActionResult Update(int id, UpdateTimeRegisterDTO timeRegisterEditDto)
         {
-            var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.Id == id);
+            var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.TimeRegisterId == id);
             if (timeRegisterDb == null)
             {
                 return NotFound();
@@ -77,10 +77,10 @@ namespace TimeReportAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:guid}")]
-        public IActionResult Delete(Guid id)
+        [Route("{id}")]
+        public IActionResult Delete(int id)
         {
-            var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.Id == id);
+            var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.TimeRegisterId == id);
             if (timeRegisterDb == null)
             {
                 return NotFound();

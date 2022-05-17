@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TimeReportAPI.Data;
 
@@ -11,9 +12,10 @@ using TimeReportAPI.Data;
 namespace TimeReportAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220517130558_addedmorePropsV2")]
+    partial class addedmorePropsV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,7 +84,7 @@ namespace TimeReportAPI.Migrations
                     b.Property<int>("Minutes")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.HasKey("TimeRegisterId");
@@ -105,13 +107,9 @@ namespace TimeReportAPI.Migrations
 
             modelBuilder.Entity("TimeReportAPI.Data.TimeRegister", b =>
                 {
-                    b.HasOne("TimeReportAPI.Data.Project", "Project")
+                    b.HasOne("TimeReportAPI.Data.Project", null)
                         .WithMany("TimeRegisters")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
+                        .HasForeignKey("ProjectId");
                 });
 
             modelBuilder.Entity("TimeReportAPI.Data.Customer", b =>

@@ -12,8 +12,8 @@ using TimeReportAPI.Data;
 namespace TimeReportAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220516115916_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220517130322_addedMoreProps")]
+    partial class addedMoreProps
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,27 +26,31 @@ namespace TimeReportAPI.Migrations
 
             modelBuilder.Entity("TimeReportAPI.Data.Customer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("CustomerId");
 
                     b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("TimeReportAPI.Data.Project", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("ProjectId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"), 1L, 1);
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -56,7 +60,7 @@ namespace TimeReportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProjectId");
 
                     b.HasIndex("CustomerId");
 
@@ -65,9 +69,11 @@ namespace TimeReportAPI.Migrations
 
             modelBuilder.Entity("TimeReportAPI.Data.TimeRegister", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("TimeRegisterId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TimeRegisterId"), 1L, 1);
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -78,10 +84,10 @@ namespace TimeReportAPI.Migrations
                     b.Property<int>("Minutes")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("TimeRegisterId");
 
                     b.HasIndex("ProjectId");
 
@@ -90,9 +96,13 @@ namespace TimeReportAPI.Migrations
 
             modelBuilder.Entity("TimeReportAPI.Data.Project", b =>
                 {
-                    b.HasOne("TimeReportAPI.Data.Customer", null)
+                    b.HasOne("TimeReportAPI.Data.Customer", "Customer")
                         .WithMany("Projects")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("TimeReportAPI.Data.TimeRegister", b =>

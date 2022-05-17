@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TimeReportAPI.Data;
 using TimeReportAPI.DTO;
+using TimeReportAPI.DTO.CustomerDTO;
 
 namespace TimeReportAPI.Controllers
 {
@@ -22,55 +24,53 @@ namespace TimeReportAPI.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            //return Ok(_mapper.Map<List<CustomerDTO>>(_context.Customers));
-
             var customerDto = _context.Customers
-                .Select(_mapper.Map<Customer, CustomerDTO>)
+                .Select(_mapper.Map<Customer, GetAllCustomerDTO>)
                 .ToList();
 
             return Ok(customerDto);
         }
 
         [HttpGet]
-        [Route("{id:guid}")]
-        public IActionResult GetById(Guid id)
+        [Route("{customerId}")]
+        public IActionResult GetById(int customerId)
         {
-            var customerDb = _context.Customers.FirstOrDefault(c => c.Id == id);
-            if (customerDb == null)
+            var customer = _context.Customers.Include(p => p.Projects).FirstOrDefault(c => c.CustomerId == customerId);
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map<CustomerDTO>(customerDb);
+            var result = _mapper.Map<GetOneCustomerDTO>(customer);
 
-            return Ok(customerDb);
+            return Ok(result);
         }
 
         [HttpPost]
-        public IActionResult New(CustomerDTO customer)
+        public IActionResult New(CreateCustomerDTO createCustomer)
         {
-            var customerDb = _mapper.Map<Customer>(customer);
- 
-            var customerDto =_mapper.Map<CustomerDTO>(customerDb);
-
-            _context.Customers.Add(customerDb);
+            var customer = _mapper.Map<Customer>(createCustomer);
+            
+            _context.Customers.Add(customer);
             
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetById), new { id = customerDto.Id }, customerDto);
+            var customerDto = _mapper.Map<GetOneCustomerDTO>(customer);
+
+            return CreatedAtAction(nameof(GetById), new { customer.CustomerId }, customerDto);
         }
 
         [HttpPut]
-        [Route("{id:guid}")]
-        public IActionResult Update(Guid id, CustomerEditDTO customerEdit)
+        [Route("{customerId}")]
+        public IActionResult Update(int customerId, UpdateCustomerDTO updateCustomerDTO)
         {
-            var customerDb = _context.Customers.FirstOrDefault(c => c.Id == id);
+            var customerDb = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
             if (customerDb == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map(customerEdit, customerDb);
+            _mapper.Map(updateCustomerDTO, customerDb);
 
             _context.SaveChanges();
 
@@ -79,10 +79,10 @@ namespace TimeReportAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:guid}")]
-        public IActionResult Delete(Guid id)
+        [Route("{customerId}")]
+        public IActionResult Delete(int customerId)
         {
-            var customerDb = _context.Customers.FirstOrDefault(c => c.Id == id);
+            var customerDb = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
             if (customerDb == null)
             {
                 return NotFound();

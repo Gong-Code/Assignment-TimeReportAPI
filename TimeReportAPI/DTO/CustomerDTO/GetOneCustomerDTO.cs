@@ -7,7 +7,8 @@ namespace TimeReportAPI.DTO.CustomerDTO
     {
         public int CustomerId { get; set; }
         public string Name { get; set; }
-        public List<GetOneProjectDTO> Projects { get; set; } = new List<GetOneProjectDTO>();
+        
+        //public List<GetOneProjectDTO> Projects { get; set; } = new List<GetOneProjectDTO>();
 
     }
 }

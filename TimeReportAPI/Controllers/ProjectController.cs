@@ -24,7 +24,7 @@ namespace TimeReportAPI.Controllers
         public IActionResult GetAll()
         {
             var projects = _context.Projects
-                .Include(t => t.TimeRegisters)
+                .Include(p => p.Customer)
                 .Select(_mapper.Map<Project, GetAllProjectDTO>)
                 .ToList();
             
@@ -35,15 +35,15 @@ namespace TimeReportAPI.Controllers
         [Route("{id}")]
         public IActionResult GetById(int id)
         {
-            var projectDb = _context.Projects.Include(t => t.TimeRegisters).FirstOrDefault(c => c.ProjectId == id);
+            var projectDb = _context.Projects.Include(c => c.Customer).FirstOrDefault(c => c.ProjectId == id);
             if (projectDb == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map<GetAllProjectDTO>(projectDb);
+           var project =_mapper.Map<GetAllProjectDTO>(projectDb);
 
-            return Ok(projectDb);
+            return Ok(project);
         }
 
         [HttpPost]

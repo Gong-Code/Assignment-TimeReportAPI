@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TimeReportAPI.Data;
 using TimeReportAPI.DTO;
 using TimeReportAPI.DTO.TimeRegisterDTO;
@@ -23,6 +24,7 @@ namespace TimeReportAPI.Controllers
         public IActionResult GetAll()
         {
             var timeRegisterDb = _context.TimeRegisters
+                .Include(p => p.Project)
                 .Select(_mapper.Map<TimeRegister, GetAllTimeRegisterDTO>)
                 .ToList();
 
@@ -33,29 +35,35 @@ namespace TimeReportAPI.Controllers
         [Route("{id}")]
         public IActionResult GetById(int id)
         {
-            var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.TimeRegisterId == id);
+            var timeRegisterDb = _context.TimeRegisters.Include(p => p.Project).FirstOrDefault(c => c.TimeRegisterId == id);
             if (timeRegisterDb == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map<GetAllTimeRegisterDTO>(timeRegisterDb);
+            var timeRegister =_mapper.Map<GetAllTimeRegisterDTO>(timeRegisterDb);
 
-            return Ok(timeRegisterDb);
+            return Ok(timeRegister);
         }
 
         [HttpPost]
         public IActionResult New(CreateTimeRegisterDTO createTimeRegister)
         {
             var timeRegister = _mapper.Map<TimeRegister>(createTimeRegister);
+            var project = _context.Projects.Find(createTimeRegister.ProjectId);
+            
+            if (project == null)
+            {
+                return NotFound("Project not found.");
+            }
 
-     
-
-            _context.TimeRegisters.Add(timeRegister);
+            project.TimeRegisters.Add(timeRegister);
 
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetById), new { id = timeRegister.TimeRegisterId}, timeRegister);
+            var timeRegisterDto = _mapper.Map<GetOneTimeRegisterDTO>(timeRegister);
+
+            return CreatedAtAction(nameof(GetById), new { id = timeRegister.TimeRegisterId}, timeRegisterDto);
         }
 
         [HttpPut]

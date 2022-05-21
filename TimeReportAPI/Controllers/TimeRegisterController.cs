@@ -55,12 +55,12 @@ namespace TimeReportAPI.Controllers
 
                 if (timeRegister.Minutes <= 0)
                 {
-                    return BadRequest();
+                    return BadRequest("Invalid minutes.");
                 }
 
                 if (timeRegister.Hours <= 0)
                 {
-                    return BadRequest();
+                    return BadRequest("Invalid hours.");
                 }
 
                 timeRegister.Date = DateTime.Now;

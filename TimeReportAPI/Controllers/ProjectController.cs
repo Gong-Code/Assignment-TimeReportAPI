@@ -38,7 +38,7 @@ namespace TimeReportAPI.Controllers
             var projectDb = _context.Projects.Include(c => c.Customer).FirstOrDefault(c => c.ProjectId == id);
             if (projectDb == null)
             {
-                return NotFound();
+                return NotFound("Project not found.");
             }
 
            var project =_mapper.Map<GetAllProjectDTO>(projectDb);

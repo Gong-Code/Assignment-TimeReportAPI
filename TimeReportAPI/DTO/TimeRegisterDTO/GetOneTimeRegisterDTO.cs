@@ -1,4 +1,6 @@
-﻿namespace TimeReportAPI.DTO.TimeRegisterDTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TimeReportAPI.DTO.TimeRegisterDTO
 {
     public class GetOneTimeRegisterDTO
     {
@@ -6,6 +8,7 @@
         public int Hours { get; set; }
         public int Minutes { get; set; }
 
+        [Required]
         public int ProjectId { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace TimeReportAPI.Controllers
             var customer = _context.Customers.Include(p => p.Projects).FirstOrDefault(c => c.CustomerId == customerId);
             if (customer == null)
             {
-                return NotFound();
+                return NotFound("Customer not found.");
             }
 
             var result = _mapper.Map<GetOneCustomerDTO>(customer);
@@ -48,7 +48,7 @@ namespace TimeReportAPI.Controllers
 
         [HttpPost]
         public IActionResult New(CreateCustomerDTO createCustomer)
-        {
+        {           
             var customer = _mapper.Map<Customer>(createCustomer);
             
             _context.Customers.Add(customer);

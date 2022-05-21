@@ -4,8 +4,9 @@ namespace TimeReportAPI.DTO.CustomerDTO
 {
     public class CreateCustomerDTO
     {
-        [MaxLength(30)]
-        public string Name { get; set; }
+        [MaxLength(20)]
+        [Required(ErrorMessage = "You should provide a name value.")]
+        public string Name { get; set; } = string.Empty;
 
     }
 }

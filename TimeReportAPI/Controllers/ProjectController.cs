@@ -49,21 +49,27 @@ namespace TimeReportAPI.Controllers
         [HttpPost]
         public IActionResult New(CreateProjectDTO createProject)
         {
-            var project = _mapper.Map<Project>(createProject);
-            var customer = _context.Customers.Find(createProject.CustomerId);
-            
-            if (customer == null)
+            if (ModelState.IsValid)
             {
-                return NotFound("Customer not found.");
+                var project = _mapper.Map<Project>(createProject);
+                var customer = _context.Customers.Find(createProject.CustomerId);
+
+                if (customer == null)
+                {
+                    return NotFound("Customer not found.");
+                }
+
+                customer.Projects.Add(project);
+
+                _context.SaveChanges();
+
+                var projectDto = _mapper.Map<GetOneProjectDTO>(project);
+
+                return CreatedAtAction(nameof(GetById), new { id = project.ProjectId }, projectDto);
             }
-            
-            customer.Projects.Add(project);
 
-            _context.SaveChanges();
-
-            var projectDto = _mapper.Map<GetOneProjectDTO>(project);
-
-            return CreatedAtAction(nameof(GetById), new { id = project.ProjectId }, projectDto);
+            return BadRequest();
+           
         }
 
         [HttpPut]

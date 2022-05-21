@@ -6,6 +6,6 @@ namespace TimeReportAPI.DTO
     {     
         [MaxLength(30)]
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

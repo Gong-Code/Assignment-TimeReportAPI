@@ -7,10 +7,10 @@ namespace TimeReportAPI.DTO
     {
         [Required(ErrorMessage = "You should provide a project name value")]
         [MaxLength(30)]
-        public string ProjectName { get; set; }
+        public string ProjectName { get; set; } = string.Empty;
 
         [MaxLength(100)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
     }
 }

@@ -89,18 +89,23 @@ namespace TimeReportAPI.Controllers
         [Route("{id}")]
         public IActionResult Update(int id, UpdateTimeRegisterDTO timeRegisterEditDto)
         {
-            var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.TimeRegisterId == id);
-            if (timeRegisterDb == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var timeRegisterDb = _context.TimeRegisters.FirstOrDefault(c => c.TimeRegisterId == id);
+                if (timeRegisterDb == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(timeRegisterEditDto, timeRegisterDb);
+
+                _context.SaveChanges();
+
+                return NoContent();
             }
 
-            _mapper.Map(timeRegisterEditDto, timeRegisterDb);
-
-            _context.SaveChanges();
-
-            return NoContent();
-
+            return BadRequest();
+           
         }
 
         [HttpDelete]

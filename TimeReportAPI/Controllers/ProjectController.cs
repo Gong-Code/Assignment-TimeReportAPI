@@ -76,18 +76,23 @@ namespace TimeReportAPI.Controllers
         [Route("{id}")]
         public IActionResult Update(int id, UpdateProjectDTO projectEditDto)
         {
-            var projectDb = _context.Projects.FirstOrDefault(c => c.ProjectId == id);
-            if (projectDb == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var projectDb = _context.Projects.FirstOrDefault(c => c.ProjectId == id);
+                if (projectDb == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(projectEditDto, projectDb);
+
+                _context.SaveChanges();
+
+                return NoContent();
             }
 
-            _mapper.Map(projectEditDto, projectDb);
-
-            _context.SaveChanges();
-
-            return NoContent();
-
+            return BadRequest();
+           
         }
 
         [HttpDelete]

@@ -7,8 +7,6 @@ namespace TimeReportAPI.DTO.TimeRegisterDTO
         public DateTime Date { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
-
-        [Required]
         public int ProjectId { get; set; }
     }
 }
